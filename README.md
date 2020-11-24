@@ -30,11 +30,11 @@ Used to select a room
 POST: /minigame/:gameId/:user/:score
 Used to send information about the status of a minigame
 
-POST: /eject/:gameId
-Used to initiate the ejection process
+POST: /eject/:gameId/:username
+Used to initiate the ejection process (Fails if anyone but the host, user1, initiates)
 
-POST: /newRound/:gameId
-Used to initiate a new round of play
+POST: /newRound/:gameId/:username
+Used to initiate a new round of play (Fails if anyone but the host, user1, initiates)
 
 PUT: /newGame/:gameId/:user1
 Used to initiate a new game
@@ -57,3 +57,5 @@ rooms: Array of rooms that players were in
 user1,...,user6: usernames of the users
 vote: Array of votes cast
 won: String which takes on values of ['false','imposter','crewmate'] indicating who has won the game
+lastKilled: Username of the player who was killed most recently
+killed: Array of usernames of all players killed by the imposter
