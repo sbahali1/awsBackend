@@ -9,6 +9,7 @@ const killPlayer = async ({ gameId, target }) => {
             gameId: gameId
         }
     };
+    var documentClient = new AWS.DynamoDB.DocumentClient();
     let table = undefined;
     await documentClient.get(params, function (err, data) {
         if (err) {
@@ -34,6 +35,15 @@ const killPlayer = async ({ gameId, target }) => {
     if (index == -1) {
         throw new Error("Target is not alive or is not a valid player name");
     }
+    let impasta = -1;
+    for (var j = 1; j < 7; j++) {
+        if (table['Item']['user' + j] == table["Item"]["aliveI"]) {
+            impasta = j;
+        }
+    }
+    let room = table["Item"]["rooms"][impasta];
+    let newKilled = table["Item"]["killed"];
+    newKilled.push(target);
     const newAlive = removeIndex(table["Item"]["aliveC"], index);
     const alive = table["Item"]["aliveT"] - 1;
     const params2 = {
@@ -41,17 +51,21 @@ const killPlayer = async ({ gameId, target }) => {
         Key: {
             gameId: gameId
         },
-        UpdateExpression: `SET aliveC = :newAlive, aliveT = :alive`,
+        UpdateExpression: `SET aliveC = :newAlive, aliveT = :alive, killRoom = :room, lastKilled = :target, killed = :newKilled`,
         ExpressionAttributeValues: {
             ':newAlive': newAlive,
-            ':alive': alive
+            ':alive': alive,
+            ':target': target,
+            ':room': room,
+            ':newKilled': newKilled
         },
         ReturnValues: 'UPDATED_NEW'
-    }
+    };
+
     try {
         const resp = await documentClient.update(params2).promise()
         console.log('Updated game: ', resp.Attributes)
-        return ("Tango down");
+        return (resp.Attributes);
     } catch (error) {
         console.log('Error updating item: ', error.message)
         return ("Failed to kill. Try again");

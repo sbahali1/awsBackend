@@ -1,88 +1,27 @@
-const AWS = require('aws-sdk')
+const AWS = require("aws-sdk")
 const documentClient = new AWS.DynamoDB.DocumentClient()
 
-const votePlayer = async ({ gameId, user, target }) => {
-    //get current score
-    var params = {
-        TableName: 'turn-based-game',
+const fetchGame = async ({ gameId }) => {
+    const params = {
+        TableName: "turn-based-game",
         Key: {
             gameId: gameId
         }
     };
-
     var documentClient = new AWS.DynamoDB.DocumentClient();
-    let table = undefined;
-    await documentClient.get(params, function (err, data) {
-        if (err) console.log(err);
-        else {
-            table = data;
-        }
-    }).promise();
-
-    let newVote = table['Item']['vote'];
-    let userNo = findPlayerNo(table, user);
-    if (userNo == -1) {
-        //return an error that player could not be found
-        throw new Error("The player voting could not be found");
-    }
-    if (findPlayerNo(table, target) == -1) {
-        throw new Error("The player voted could not be found");
-    }
-    //check if person already dead
-    if (!checkAlive(table, user)) {
-        throw new Error("Player is already dead");
-    }
-    if (!checkAlive(table, target)) {
-        throw new Error("Player is already dead");
-    }
-
-    function checkAlive(gameState, player) {
-        for (var i = 0; i < gameState['Item']['aliveC'].length; i++) {
-            if (gameState['Item']['aliveC'][i] == player) {
-                return true;
-            }
-        }
-        if (gameState['Item']['aliveI'] == player) {
-            return true;
-        }
-
-        return false;
-    }
-    function findPlayerNo(gameState, player) {
-        for (var i = 1; i < 7; i++) {
-            if (gameState['Item']['user' + i] == player) {
-                return i;
-            }
-        }
-        return -1;//cannot be found
-    }
-
-
-    newVote[userNo - 1] = target;
-    //check if target voted is alive
-
-    let params2 = {
-        TableName: 'turn-based-game',
-        Key: {
-            gameId: gameId
-        },
-        UpdateExpression: `SET vote = :newVote`,
-        ExpressionAttributeValues: {
-            ':newVote': newVote
-        },
-        ReturnValues: 'UPDATED_NEW'
-    };
-
-
-
     try {
-        const resp = await documentClient.update(params2).promise()
-        console.log('Updated game: ', resp.Attributes)
-        return resp.Attributes;
+        const game = await documentClient.get(params).promise();
+        let arr = [];
+        for (var i = 1; i < 7; i++) {
+            if (game["Item"]["user" + i] != '') {
+                arr.push(game["Item"]["user" + i]);
+            }
+        }
+        return arr;
     } catch (error) {
-        console.log('Error updating item: ', error.message)
-        return "Failed to vote";
+        console.log("Error fetching game: ", error.message);
+        return ("Could not fetch attribute");
     }
 }
 
-module.exports = votePlayer;
+module.exports = fetchGame;

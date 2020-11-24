@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk')
 const documentClient = new AWS.DynamoDB.DocumentClient()
 
-const newRound = async ({ gameId }) => {
+const newRound = async ({ gameId, username }) => {
     //get current score
     var params = {
         TableName: 'turn-based-game',
@@ -18,9 +18,12 @@ const newRound = async ({ gameId }) => {
             table = data;
         }
     }).promise();
-
+    if (table["Item"]["user1"] != username) {
+        return "You are not the host";
+    }
     let zeroArr = ['', '', '', '', '', ''];
-    let killRoom = ['', ''];
+    let zeroes = [0, 0, 0, 0, 0, 0];
+    let killRoom = '';
     let won = 'false';
     if (table['Item']['aliveI'].length == 0) {
         console.log('test');
@@ -37,18 +40,21 @@ const newRound = async ({ gameId }) => {
         //crewmate win
     }
     let params2 = undefined;
+    let emp = '';
     if (won == 'false') {
         params2 = {
             TableName: 'turn-based-game',
             Key: {
                 gameId: gameId
             },
-            UpdateExpression: `SET vote = :zeroArr, rooms = :zeroArr, minigame= :zeroArr, killRoom = :killRoom`,
+            UpdateExpression: `SET vote = :zeroArr, rooms = :zeroArr, minigame= :zeroes, killRoom = :killRoom, lastEjected = :emp, lastKilled = :emp`,
             ExpressionAttributeValues: {
                 ':zeroArr': zeroArr,
-                ':killRoom': killRoom
+                ':zeroes': zeroes,
+                ':killRoom': killRoom,
+                ':emp': emp
             },
-            ReturnValues: 'UPDATED_NEW'
+            ReturnValues: 'ALL_NEW'
         }
     }
     else {
@@ -67,7 +73,7 @@ const newRound = async ({ gameId }) => {
     try {
         const resp = await documentClient.update(params2).promise()
         console.log('Updated game: ', resp.Attributes)
-        return ("New round initiated");
+        return (resp.Attributes);
     } catch (error) {
         console.log('Error updating item: ', error.message)
         return ("Failed to start new round. Try again");

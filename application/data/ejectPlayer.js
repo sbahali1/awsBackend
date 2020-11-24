@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk')
 const documentClient = new AWS.DynamoDB.DocumentClient()
 
-const ejectPlayer = async ({ gameId }) => {
+const ejectPlayer = async ({ gameId, username }) => {
     //get current score
     var params = {
         TableName: 'turn-based-game',
@@ -27,7 +27,9 @@ const ejectPlayer = async ({ gameId }) => {
         }
         return -1;//cannot be found
     }
-
+    if (findPlayerNo(table, username) != 1) {
+        return "You are not the host";
+    }
     let count = [0, 0, 0, 0, 0, 0];
     let numVotes = 0;
     let user = '';

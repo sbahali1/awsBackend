@@ -2,7 +2,7 @@ const AWS = require("aws-sdk");
 const documentClient = new AWS.DynamoDB.DocumentClient();
 
 const addMiniGameScore = async ({ gameId, user, score }) => {
-    //get current score
+  //get current score
     var params = {
         TableName: 'turn-based-game',
         Key: {
@@ -27,24 +27,24 @@ const addMiniGameScore = async ({ gameId, user, score }) => {
             userNo = i;
         }
     }
-
+    
     function checkAlive(gameState, player) {
-        for (var i = 0; i < gameState['Item']['aliveC'].length; i++) {
-            if (gameState['Item']['aliveC'][i] == player) {
-                return true;
-            }
-        }
-        if (gameState['Item']['aliveI'] == player) {
+    for (var i = 0; i < gameState['Item']['aliveC'].length; i++) {
+        if (gameState['Item']['aliveC'][i] == player) {
             return true;
         }
-
-        return false;
     }
-
+    if(gameState['Item']['aliveI'] == player) {
+        return true;
+    }
+    
+    return false;
+}
+    
     //validates user info
-    if (userNo == -1) throw new Error("Could not find player");
-    if (!checkAlive(table, user)) throw new Error("Player is dead");
-
+    if(userNo==-1) throw new Error("Could not find player");
+    if(!checkAlive(table,user)) throw new Error("Player is dead");
+    
     newMiniGame[userNo - 1] = score;
     const params2 = {
         TableName: 'turn-based-game',
@@ -62,7 +62,7 @@ const addMiniGameScore = async ({ gameId, user, score }) => {
     try {
         const resp = await documentClient.update(params2).promise()
         console.log('Updated game: ', resp.Attributes)
-        return ("Added minigame score successfully");
+        return ("Added minigame score successfully.");
     } catch (error) {
         console.log('Error updating item: ', error.message)
         return ("Failed to add minigame score");

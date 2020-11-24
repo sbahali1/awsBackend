@@ -4,13 +4,13 @@ function checkAlive(gameState, player) {
             return true;
         }
     }
-    if(gameState['Item']['aliveI'] == player) {
+    if (gameState['Item']['aliveI'] == player) {
         return true;
     }
-    
+
     return false;
 }
-function findPlayerNo(gameState,player){
+function findPlayerNo(gameState, player) {
     for (var i = 1; i < 7; i++) {
         if (gameState['Item']['user' + i] == player) {
             return i;

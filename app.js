@@ -72,7 +72,6 @@ app.get("/lobby/:gameId", wrapAsync(async (req, res) => {
     }
 }));
 
-
 //retrieve status of player
 app.get("/alive/:gameId/:user", wrapAsync(async (req, res) => {
     const status = await authenticatorFunc(req, res);
@@ -178,7 +177,7 @@ app.post("/minigame/:gameId/:user/:score", wrapAsync(async (req, res) => {
 }));
 
 //initiate the ejection
-app.post("/eject/:gameId", wrapAsync(async (req, res) => {
+app.post("/eject/:gameId/:username", wrapAsync(async (req, res) => {
     const status = await authenticatorFunc(req, res);
     if (status != 200) {
         res.sendStatus(status);
@@ -187,6 +186,7 @@ app.post("/eject/:gameId", wrapAsync(async (req, res) => {
     else {
         const param = {
             gameId: req.params.gameId,
+            username: req.params.username,
         };
         const val = await ejectPlayer(param);
         res.json(val);
@@ -194,7 +194,7 @@ app.post("/eject/:gameId", wrapAsync(async (req, res) => {
 }));
 
 //start a new round
-app.post("/newRound/:gameId", wrapAsync(async (req, res) => {
+app.post("/newRound/:gameId/:username", wrapAsync(async (req, res) => {
     const status = await authenticatorFunc(req, res);
     if (status != 200) {
         res.sendStatus(status);
@@ -203,6 +203,7 @@ app.post("/newRound/:gameId", wrapAsync(async (req, res) => {
     else {
         const param = {
             gameId: req.params.gameId,
+            username: req.params.username,
         };
         const val = await newRound(param);
         res.json(val);
