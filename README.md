@@ -57,3 +57,5 @@ rooms: Array of rooms that players were in
 user1,...,user6: usernames of the users
 vote: Array of votes cast
 won: String which takes on values of ['false','imposter','crewmate'] indicating who has won the game
+lastKilled: Username of the player who was killed most recently
+killed: Array of usernames of all players killed by the imposter
