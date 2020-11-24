@@ -30,11 +30,11 @@ Used to select a room
 POST: /minigame/:gameId/:user/:score
 Used to send information about the status of a minigame
 
-POST: /eject/:gameId
-Used to initiate the ejection process
+POST: /eject/:gameId/:username
+Used to initiate the ejection process (Fails if anyone but the host, user1, initiates)
 
-POST: /newRound/:gameId
-Used to initiate a new round of play
+POST: /newRound/:gameId/:username
+Used to initiate a new round of play (Fails if anyone but the host, user1, initiates)
 
 PUT: /newGame/:gameId/:user1
 Used to initiate a new game
