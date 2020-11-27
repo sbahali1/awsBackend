@@ -8,7 +8,7 @@ const fetchGame = async ({ gameId }) => {
             gameId: gameId
         }
     };
-    var documentClient = new AWS.DynamoDB.DocumentClient();
+    
     try {
         const game = await documentClient.get(params).promise();
         let arr = [];

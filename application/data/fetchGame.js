@@ -12,7 +12,7 @@ const fetchGame = async ({ gameId, attr }) => {
         //if not asking for one of these, throw error
         throw new Error("Bad Request");
     }*/
-    var documentClient = new AWS.DynamoDB.DocumentClient();
+    
     try {
         const game = await documentClient.get(params).promise();
         console.log(game.Item[attr]);

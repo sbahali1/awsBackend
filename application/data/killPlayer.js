@@ -9,7 +9,7 @@ const killPlayer = async ({ gameId, target }) => {
             gameId: gameId
         }
     };
-    var documentClient = new AWS.DynamoDB.DocumentClient();
+    
     let table = undefined;
     await documentClient.get(params, function (err, data) {
         if (err) {

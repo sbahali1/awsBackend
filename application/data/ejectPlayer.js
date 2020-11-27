@@ -10,7 +10,6 @@ const ejectPlayer = async ({ gameId, username }) => {
         }
     };
 
-    var documentClient = new AWS.DynamoDB.DocumentClient();
     let table = undefined;
     await documentClient.get(params, function (err, data) {
         if (err) console.log(err);

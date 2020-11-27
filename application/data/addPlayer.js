@@ -18,7 +18,7 @@ const addPlayer = async ({ gameId, username }) => {
             gameId: gameId
         }
     };
-    var documentClient = new AWS.DynamoDB.DocumentClient();
+    
     let table = undefined;
     await documentClient.get(params, function (err, data) {
         if (err) console.log(err);
@@ -49,7 +49,6 @@ const addPlayer = async ({ gameId, username }) => {
             },
             ReturnValues: 'ALL_NEW'
         }
-        documentClient = new AWS.DynamoDB.DocumentClient();
 
         try {
             const resp = await documentClient.update(params2).promise()
@@ -90,7 +89,7 @@ const addPlayer = async ({ gameId, username }) => {
             },
             ReturnValues: 'ALL_NEW'
         }
-        documentClient = new AWS.DynamoDB.DocumentClient();
+        
         try {
             const resp = await documentClient.update(params2).promise()
             console.log('Updated game: ', resp.Attributes)
