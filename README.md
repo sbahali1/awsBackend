@@ -59,3 +59,6 @@ vote: Array of votes cast
 won: String which takes on values of ['false','imposter','crewmate'] indicating who has won the game
 lastKilled: Username of the player who was killed most recently
 killed: Array of usernames of all players killed by the imposter
+
+For a demo of the game, see the link below
+https://www.youtube.com/watch?v=kk3ujBXXMJo&feature=emb_title
